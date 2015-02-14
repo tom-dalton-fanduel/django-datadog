@@ -8,6 +8,7 @@ except ImportError:
 
 # django
 from django.conf import settings
+from django.core.urlresolvers import resolve
 
 # dogapi
 from dogapi import dog_http_api as api
@@ -35,9 +36,13 @@ class DatadogMiddleware(object):
         if not hasattr(request, self.DD_TIMING_ATTRIBUTE):
             return response
 
+        view = resolve(request.path)
+        if not view:
+            return response
+
         # Calculate request time and submit to Datadog
         request_time = time.time() - getattr(request, self.DD_TIMING_ATTRIBUTE)
-        tags = self._get_metric_tags(request)
+        tags = [u"view:{0}".format(view.url_name)]
         dog_stats_api.histogram(self.timing_metric, request_time, tags=tags)
 
         return response
@@ -67,6 +72,3 @@ class DatadogMiddleware(object):
         # Increment our errors metric
         tags = self._get_metric_tags(request)
         dog_stats_api.increment(self.error_metric, tags=tags)
-
-    def _get_metric_tags(self, request):
-        return ['path:{0}'.format(request.path)]
