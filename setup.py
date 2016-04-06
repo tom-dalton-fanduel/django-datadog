@@ -12,12 +12,12 @@ setup(
     name = 'django-datadog',
     version = '0.1.0',
     packages = [
-        'datadog',
-        'datadog.middleware'
+        'django-datadog',
+        'django-datadog.middleware'
     ],
     include_package_data = True,
     license = 'BSD',
-    description = ' simple Django middleware for submitting timings and exceptions to Datadog.',
+    description = 'Simple Django middleware for submitting timings and exceptions to Datadog.',
     long_description = README,
     author = 'Conor Branagan',
     author_email = 'conor.branagan@gmail.com',
