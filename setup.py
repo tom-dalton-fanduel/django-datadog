@@ -22,6 +22,6 @@ setup(
     author = 'Conor Branagan',
     author_email = 'conor.branagan@gmail.com',
     install_requires = reqs.extend([
-        'dogapi==1.2.1'
+        'datadog==0.11.0'
     ])
 )
