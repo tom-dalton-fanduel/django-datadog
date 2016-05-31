@@ -7,8 +7,9 @@ except ImportError:
     import simplejson as json
 
 # django
-from django.conf import settings
 from django.http import Http404
+from django.conf import settings
+from django.core.urlresolvers import resolve
 
 # Data dog API
 from datadog import initialize
@@ -77,4 +78,9 @@ class DatadogMiddleware(object):
         self.stats.increment(self.error_metric, tags=tags)
 
     def _get_metric_tags(self, request):
-        return ['path:{0}'.format(request.path)]
+        path = request.path
+        view = resolve(path)
+        if view:
+            path = view.url_name
+        return ['path:{0}'.format(path)]
+
