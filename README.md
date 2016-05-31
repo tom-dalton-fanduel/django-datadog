@@ -15,7 +15,7 @@ python setup.py install
 Add `django-datadog` to your list of installed apps.
 
 ```python
-INSTALLED_APPS += ('django-datadog')
+INSTALLED_APPS += ('django-datadog', )
 ```
 
 Add the following configuration to your projects' `settings.py` file:
