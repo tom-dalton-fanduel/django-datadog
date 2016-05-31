@@ -7,12 +7,12 @@ A simple Django middleware for submitting timings and exceptions to Datadog.
 Download the code into your project and install it.
 
 ```bash
-git clone git://github.com/conorbranagan/django-datadog.git
+git clone git://github.com/tom-dalton-fanduel/django-datadog.git
 cd django-datadog
 python setup.py install
 ```
 
-Add `datadog` to your list of installed apps.
+Add `django-datadog` to your list of installed apps.
 
 ```python
 INSTALLED_APPS += ('django-datadog')
