@@ -41,7 +41,7 @@ quicktest: requirements
 
 
 coverage: requirements
-	tox -e coverage
+	tox
 
 
 test: coverage lint
