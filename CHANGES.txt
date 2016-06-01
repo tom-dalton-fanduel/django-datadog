@@ -1,0 +1,10 @@
+v0.1.0, 01-Jun-2016
+-------------------
+
+* Forked from https://github.com/conorbranagan/django-datadog 
+* Renamed from django-datadog to fdjangodog
+* Changed to use local dogstatsd collector daemon rather than `ThreadStats`
+* Removed exception event logging
+* Added status_code tag to request_time histogram
+* Added unit tests with tox / py.test
+* Added Makefile to simplify testing/building package 
