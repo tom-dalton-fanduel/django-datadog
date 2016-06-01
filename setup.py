@@ -5,11 +5,11 @@ from setuptools import setup
 README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 
 setup(
-    name = 'django-datadog',
-    version='0.2.0',
+    name='fdjangodog',
+    version='0.1.0',
     packages = [
-        'django-datadog',
-        'django-datadog.middleware'
+        'fdjangodog',
+        'fdjangodog.middleware'
     ],
     include_package_data = True,
     license = 'BSD',
