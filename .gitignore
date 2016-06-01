@@ -1,17 +1,17 @@
+*.pyc
+*egg-info
+*.egg
+
+.cache/
+.coverage
+.tox
+.requirements.txt
+
 _build
 build
 dist
 
 coverage.xml
 fdjangodog_lint.txt
-testresults_coverage.xml
-
-.tox
-.requirements.txt
-.coverage
-.cache/
-
-*.pyc
-*egg-info
-*.egg
+testresults_*.xml
 
