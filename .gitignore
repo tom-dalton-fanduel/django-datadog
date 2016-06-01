@@ -6,4 +6,6 @@ _build
 *.egg
 .tox
 .requirements.txt
+.coverage
+testresults_coverage.xml
 

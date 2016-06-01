@@ -33,7 +33,7 @@ requirements: .requirements.txt
 
 
 lint: requirements
-	flake8 c3pyo | tee c3pyo_lint.txt
+	flake8 fdjangodog | tee fdjangodog_lint.txt
 
 
 quicktest: requirements
@@ -48,7 +48,7 @@ test: coverage lint
 
 
 clean:
-	rm -rf .coverage coverage.xml coverage-report .requirements.txt fd_c3pyo.egg-info dist .tox testresults_*.xml
+	rm -rf .coverage coverage.xml coverage-report .requirements.txt fdjangodog.egg-info dist .tox testresults_*.xml
 	find . -name '*.pyc' -delete
 
 
