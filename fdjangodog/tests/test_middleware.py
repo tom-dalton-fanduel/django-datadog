@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.test.client import RequestFactory
 
 from fdjangodog.middleware import FDjangoDogMiddleware
+from django.http.response import Http404
 
 
 MODULE_UNDER_TEST = "fdjangodog.middleware"
@@ -98,3 +99,13 @@ def test_process_exception(statsd_mock, middleware, processed_request, unhandled
 def test_process_exception__ignores_unprocessed_request(statsd_mock, middleware, named_request, unhandled_error):
     middleware.process_exception(named_request, unhandled_error)
     assert statsd_mock.histogram.call_count == 0
+
+
+def test_process_exception__handles_http_404(statsd_mock, middleware):
+    rf = RequestFactory()
+    request = rf.get('/this_doesnt_exist/')
+    middleware.process_request(request)
+    middleware.process_exception(request, Http404())
+
+    __, kwargs = statsd_mock.histogram.call_args
+    assert kwargs['tags'] == ['exception:Http404']

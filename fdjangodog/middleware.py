@@ -1,7 +1,7 @@
 import time
 
 from django.conf import settings
-from django.core.urlresolvers import resolve
+from django.core.urlresolvers import resolve, Resolver404
 
 from datadog import statsd
 
@@ -19,7 +19,11 @@ class FDjangoDogMiddleware(object):
         return time.time() - getattr(request, self.DD_TIMING_ATTRIBUTE)
 
     def _get_request_handler(self, request):
-        match = resolve(request.path)
+        try:
+            match = resolve(request.path)
+        except Resolver404:
+            return None
+
         if match.url_name:
             return "url:{}".format(match.url_name)
         return "view:{}".format(match.view_name)
