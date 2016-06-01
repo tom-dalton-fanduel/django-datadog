@@ -1,12 +1,8 @@
 from django.conf.urls import url
-from django.http.response import HttpResponse
-
-
-def null_view(request):
-    return HttpResponse()
+from django.views.generic.base import View
 
 
 urlpatterns = [
-    url(r'', null_view),
-    url(r'/test', null_view),
+    url(r'', View.as_view()),
+    url(r'/test', View.as_view()),
 ]
