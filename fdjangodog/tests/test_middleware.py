@@ -1,6 +1,7 @@
 import pytest
 
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import HttpResponse
+from django.test.client import RequestFactory
 
 from fdjangodog.middleware import FDjangoDogMiddleware
 
@@ -14,16 +15,21 @@ def middleware():
 
 
 @pytest.fixture
-def unprocessed_request():
-    request = HttpRequest()
-    request.path = "/test"
-    return request
+def named_request():
+    rf = RequestFactory()
+    return rf.get('/named_path/')
 
 
 @pytest.fixture
-def processed_request(unprocessed_request, middleware):
-    middleware.process_request(unprocessed_request)
-    return unprocessed_request
+def unnamed_request():
+    rf = RequestFactory()
+    return rf.get('/unnamed_path/')
+
+
+@pytest.fixture
+def processed_request(named_request, middleware):
+    middleware.process_request(named_request)
+    return named_request
 
 
 @pytest.fixture
@@ -50,26 +56,45 @@ def test_process_response(statsd_mock, middleware, processed_request, response):
     new_response = middleware.process_response(processed_request, response)
 
     assert new_response is response
-    assert statsd_mock.histogram.call_count == 1
+
+    __, kwargs = statsd_mock.histogram.call_args
+    assert kwargs['metric'] == 'fdjangodog_app_name.request_time'
+    assert kwargs['value'] > 0.0
+    assert kwargs['tags'] == ['handler:url:a_url_name', 'status_code:200']
 
 
-def test_process_response_ignores_unprocessed_request(statsd_mock, middleware, unprocessed_request, response):
-    new_response = middleware.process_response(processed_request, response)
+def test_process_request__unnamed_url(statsd_mock, middleware, unnamed_request, response):
+    middleware.process_request(unnamed_request)
 
-    assert new_response is response
+    middleware.process_response(unnamed_request, response)
+
+    __, kwargs = statsd_mock.histogram.call_args
+    assert kwargs['tags'] == ['handler:view:django.views.generic.base.View', 'status_code:200']
+
+
+def test_process_response__status_code(statsd_mock, middleware, processed_request):
+    response = HttpResponse(status=302)
+    middleware.process_response(processed_request, response)
+
+    __, kwargs = statsd_mock.histogram.call_args
+
+    assert kwargs['tags'] == ['handler:url:a_url_name', 'status_code:302']
+
+
+def test_process_response__ignores_unprocessed_request(statsd_mock, middleware, named_request, response):
+    middleware.process_response(named_request, response)
     assert statsd_mock.histogram.call_count == 0
 
 
 def test_process_exception(statsd_mock, middleware, processed_request, unhandled_error):
     middleware.process_exception(processed_request, unhandled_error)
-    assert statsd_mock.histogram.call_count == 1
+
+    __, kwargs = statsd_mock.histogram.call_args
+    assert kwargs['metric'] == 'fdjangodog_app_name.request_time'
+    assert kwargs['value'] > 0.0
+    assert kwargs['tags'] == ['handler:url:a_url_name', 'exception:Exception']
 
 
-def test_process_exception_ignores_unprocessed_request(statsd_mock, middleware, unprocessed_request, unhandled_error):
-    middleware.process_exception(unprocessed_request, unhandled_error)
-    assert statsd_mock.histogram.call_count == 0
-
-
-def test_process_exception_ignores_404(statsd_mock, middleware, processed_request):
-    middleware.process_exception(processed_request, Http404())
+def test_process_exception__ignores_unprocessed_request(statsd_mock, middleware, named_request, unhandled_error):
+    middleware.process_exception(named_request, unhandled_error)
     assert statsd_mock.histogram.call_count == 0

@@ -33,7 +33,7 @@ FDJANGODOG_APP_NAME = 'my_app'  # Used as the prefix for all metric names - e.g.
 ```
 
 Add the Datadog request handler to your middleware in `settings.py`. In order to capture the most accurate timing data,
-and to ensure the `success` tag is set correctly, it should be the 'outermost' (e.g. first in the list) middleware.
+and to ensure the tags are set correctly, it should be the 'outermost' (e.g. first in the list) middleware.
 
 ```python
 MIDDLEWARE_CLASSES.insert(0, 'fdjangodog.middleware.FDjangoDogMiddleware')
@@ -49,9 +49,11 @@ Once the middlewhere is installed, you'll start receiving timing data in your Da
 Note: `my_app` will be replaced by whatever value you give for `DATADOG_APP_NAME`.
 
 This is tagged with:
-* `success`: whether an unhandled exception occurred
-* `path`: The canonical route/path of the request
+* `handler`: The name of the handler for the request - this will be in the form of:
+** `url:<url_name>` if the url resolver rule was named
+** `view:<view_name>` if the url resolver rule was not named
 * `status_code`: The http response status code (e.g. 200, 503 etc).
+* `exception`: The name of the exception class in the case of an unhandled exception
 
 
 ## Development

@@ -2,7 +2,6 @@ import time
 
 from django.conf import settings
 from django.core.urlresolvers import resolve
-from django.http import Http404
 
 from datadog import statsd
 
@@ -19,28 +18,29 @@ class FDjangoDogMiddleware(object):
     def _get_elapsed_time(self, request):
         return time.time() - getattr(request, self.DD_TIMING_ATTRIBUTE)
 
-    def _get_request_path(self, request):
-        path = request.path
-        view = resolve(path)
-        if view:
-            path = view.url_name
-        return path
+    def _get_request_handler(self, request):
+        match = resolve(request.path)
+        if match.url_name:
+            return "url:{}".format(match.url_name)
+        return "view:{}".format(match.view_name)
 
-    def _get_metric_tags(self, request, response=None, success=True):
-        path = self._get_request_path(request)
+    def _get_metric_tags(self, request, response=None, exception=None):
+        tags = []
 
-        tags = [
-            'path:{}'.format(path),
-            'success:{}'.format(success),
-        ]
+        handler = self._get_request_handler(request)
+        if handler:
+            tags.append('handler:{}'.format(handler))
 
         if response:
             tags.append('status_code:{}'.format(response.status_code))
 
+        if exception:
+            tags.append('exception:{}'.format(exception.__class__.__name__))
+
         return tags
 
     def _record_request_time(self, request, tags):
-        self.stats.histogram(self.timing_metric, self._get_elapsed_time(request), tags=tags)
+        self.stats.histogram(metric=self.timing_metric, value=self._get_elapsed_time(request), tags=tags)
 
     def process_request(self, request):
         setattr(request, self.DD_TIMING_ATTRIBUTE, time.time())
@@ -60,8 +60,5 @@ class FDjangoDogMiddleware(object):
         if not hasattr(request, self.DD_TIMING_ATTRIBUTE):
             return
 
-        if isinstance(exception, Http404):
-            return
-
-        tags = self._get_metric_tags(request, success=False)
+        tags = self._get_metric_tags(request, exception=exception)
         self._record_request_time(request, tags)
