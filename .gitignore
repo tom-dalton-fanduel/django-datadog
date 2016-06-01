@@ -1,11 +1,15 @@
-*.pyc
+_build
 build
 dist
-*egg-info
-_build
-*.egg
+
+testresults_coverage.xml
+
 .tox
 .requirements.txt
 .coverage
-testresults_coverage.xml
+.cache/
+
+*.pyc
+*egg-info
+*.egg
 
