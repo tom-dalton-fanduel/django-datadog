@@ -56,7 +56,7 @@ This is tagged with:
 
 ## Development
 
-The project can be tested for python 2.7 and 3 using tox.
+The project using tox:
 
 ```
 make test
