@@ -8,7 +8,6 @@ setup(
     version='0.1.0',
     packages = [
         'fdjangodog',
-        'fdjangodog.middleware'
     ],
     include_package_data = True,
     license = 'BSD',
