@@ -52,3 +52,12 @@ This is tagged with:
 * `success`: whether an unhandled exception occurred
 * `path`: The canonical route/path of the request
 * `status_code`: The http response status code (e.g. 200, 503 etc).
+
+
+## Development
+
+The project can be tested for python 2.7 and 3 using tox.
+
+```
+make test
+```
