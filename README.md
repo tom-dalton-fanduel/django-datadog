@@ -56,7 +56,7 @@ This is tagged with:
 
 ## Development
 
-The project using tox:
+Tox is used to test the project in python 2.7 and 3.4:
 
 ```
 make test
