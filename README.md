@@ -7,7 +7,11 @@ This project was originally forked from https://github.com/conorbranagan/django-
 
 ## Requirements
 
-Tested in python 2.7 and 3.5. Other versions may or may not work!
+Python:
+* Tested with 2.7 and 3.4
+
+Django
+* Tested with 1.9
 
 
 ## Installation
