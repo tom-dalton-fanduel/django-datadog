@@ -1,3 +1,9 @@
+v0.2.0, 02-Jun-2016
+-------------------
+
+* Added `namespace` and `method` tags to request_time metric
+
+
 v0.1.0, 01-Jun-2016
 -------------------
 
