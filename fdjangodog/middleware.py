@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.urlresolvers import resolve, Resolver404
 
 from datadog import statsd
-from django.http.request import HttpRequest
 
 
 class FDjangoDogMiddleware(object):
