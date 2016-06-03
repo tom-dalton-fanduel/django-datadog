@@ -53,9 +53,12 @@ Once the middlewhere is installed, you'll start receiving timing data in your Da
 Note: `my_app` will be replaced by whatever value you give for `DATADOG_APP_NAME`.
 
 This is tagged with:
-* `handler`: The name of the handler for the request - this will be in the form of:
-** `url:<url_name>` if the url resolver rule was named
-** `view:<view_name>` if the url resolver rule was not named
+* `method`: The HTTP method of the request
+* `namespace`: The url namespace in which the matching url rule is found
+** See https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.namespace
+* `handler`: The name of the handler for the request - this will be in one of these forms of:
+** `url:<url_name>` if the url resolver rule was named ([ResolverMatch.url_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.url_name))
+** `view:<view_name>` if the url resolver rule was not named ([ResolverMatch.view_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.view_name))
 * `status_code`: The http response status code (e.g. 200, 503 etc).
 * `exception`: The name of the exception class in the case of an unhandled exception
 

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.urlresolvers import resolve, Resolver404
 
 from datadog import statsd
+from django.http.request import HttpRequest
 
 
 class FDjangoDogMiddleware(object):
@@ -18,20 +19,30 @@ class FDjangoDogMiddleware(object):
     def _get_elapsed_time(self, request):
         return time.time() - getattr(request, self.DD_TIMING_ATTRIBUTE)
 
-    def _get_request_handler(self, request):
+    def _get_request_namespace_and_handler(self, request):
         try:
             match = resolve(request.path)
         except Resolver404:
-            return None
+            return None, None
+
+        namespace = match.namespace
 
         if match.url_name:
-            return "url:{}".format(match.url_name)
-        return "view:{}".format(match.view_name)
+            handler_name = "url:{}".format(match.url_name)
+        else:
+            handler_name = "view:{}".format(match.view_name)
+
+        return namespace, handler_name
 
     def _get_metric_tags(self, request, response=None, exception=None):
         tags = []
 
-        handler = self._get_request_handler(request)
+        if request.method:
+            tags.append('method:{}'.format(request.method))
+
+        namespace, handler = self._get_request_namespace_and_handler(request)
+        if namespace:
+            tags.append('namespace:{}'.format(namespace))
         if handler:
             tags.append('handler:{}'.format(handler))
 
