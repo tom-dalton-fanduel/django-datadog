@@ -1,5 +1,7 @@
 # FDjangoDog
 
+[![Build Status](https://travis-ci.org/tom-dalton-fanduel/fdjangodog.svg?branch=master)](https://travis-ci.org/tom-dalton-fanduel/fdjangodog)
+
 A simple Django middleware for submitting timings and exceptions to Datadog.
 
 This project was originally forked from https://github.com/conorbranagan/django-datadog
@@ -8,7 +10,7 @@ This project was originally forked from https://github.com/conorbranagan/django-
 ## Requirements
 
 Python:
-* Tested with 2.7 and 3.4
+* Tested with 2.7, 3.4 and 3.5
 
 Django
 * Tested with 1.9
@@ -65,8 +67,10 @@ This is tagged with:
 
 ## Development
 
-Tox is used to test the project in python 2.7 and 3.4:
+Locally, Tox is used to test the project in multiple versions of python.
 
 ```
 make test
 ```
+
+Travis CI is also setup to test pull requests in the same way.
