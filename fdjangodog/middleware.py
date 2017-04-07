@@ -1,12 +1,17 @@
 import time
 
+from datadog import statsd
 from django.conf import settings
 from django.core.urlresolvers import resolve, Resolver404
 
-from datadog import statsd
+try:
+    from django.utils.deprecation import MiddlewareMixin
+    base_class = MiddlewareMixin
+except ImportError:
+    base_class = object
 
 
-class FDjangoDogMiddleware(object):
+class FDjangoDogMiddleware(base_class):
     APP_NAME = settings.FDJANGODOG_APP_NAME
     DD_TIMING_ATTRIBUTE = '_dd_start_time'
 

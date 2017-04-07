@@ -13,7 +13,7 @@ Python:
 * Tested with 2.7, 3.4 and 3.5
 
 Django
-* Tested with 1.9
+* Tested with 1.9 and 1.10
 
 
 ## Installation
