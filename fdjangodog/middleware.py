@@ -15,9 +15,10 @@ class FDjangoDogMiddleware(base_class):
     APP_NAME = settings.FDJANGODOG_APP_NAME
     DD_TIMING_ATTRIBUTE = '_dd_start_time'
 
-    def __init__(self):
-        self.stats = statsd
+    def __init__(self, *args, **kwargs):
+        super(FDjangoDogMiddleware, self).__init__(*args, **kwargs)
 
+        self.stats = statsd
         self.timing_metric = '{}.request_time'.format(self.APP_NAME)
 
     def _get_elapsed_time(self, request):

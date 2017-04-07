@@ -1,14 +1,26 @@
 import pytest
 
+import django
 from django.http.response import Http404, HttpResponse
 from django.test.client import RequestFactory
 
 from fdjangodog import middleware
 
 
-@pytest.fixture
-def fdd_middleware():
-    return middleware.FDjangoDogMiddleware()
+_DJANGO_VERSION = django.__version__.split('.')
+
+if _DJANGO_VERSION[0:2] == ['1', '9']:
+    @pytest.fixture
+    def fdd_middleware():
+        return middleware.FDjangoDogMiddleware()
+
+elif _DJANGO_VERSION[0:2] == ['1', '10']:
+    @pytest.fixture
+    def fdd_middleware(mocker):
+        return middleware.FDjangoDogMiddleware(get_response=mocker.Mock())
+
+else:
+    pytest.fail("Unsupported django version: ".format(django.__version__))
 
 
 @pytest.fixture
