@@ -69,11 +69,6 @@ This is tagged with:
 Locally, Tox is used to test the project in multiple versions of python.
 
 ```
-pip install tox
-tox
-```
-
-```
 make test
 ```
 
