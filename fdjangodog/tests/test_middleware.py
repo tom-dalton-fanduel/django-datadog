@@ -14,7 +14,7 @@ if _DJANGO_VERSION[0:2] == ['1', '9']:
     def fdd_middleware():
         return middleware.FDjangoDogMiddleware()
 
-elif _DJANGO_VERSION[0:2] == ['1', '10']:
+elif _DJANGO_VERSION[0:2] == ['1', '10'] or _DJANGO_VERSION[0:2] == ['1', '11']:
     @pytest.fixture
     def fdd_middleware(mocker):
         return middleware.FDjangoDogMiddleware(get_response=mocker.Mock())

@@ -1,8 +1,12 @@
 import time
 
-from datadog import statsd
+from datadog import DogStatsd
 from django.conf import settings
-from django.core.urlresolvers import resolve, Resolver404
+
+try:
+    from django.urls import resolve, Resolver404
+except ImportError:
+    from django.core.urlresolvers import resolve, Resolver404
 
 try:
     from django.utils.deprecation import MiddlewareMixin
@@ -10,6 +14,12 @@ try:
 except ImportError:
     base_class = object
 
+if hasattr(settings, 'FDJANGODOG_STATSD_HOST'):
+    statsd_host = settings.FDJANGODOG_STATSD_HOST
+else:
+    statsd_host = "localhost"
+
+statsd = DogStatsd(host=statsd_host)
 
 class FDjangoDogMiddleware(base_class):
     APP_NAME = settings.FDJANGODOG_APP_NAME

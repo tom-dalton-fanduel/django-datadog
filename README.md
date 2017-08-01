@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/tom-dalton-fanduel/fdjangodog.svg?branch=master)](https://travis-ci.org/tom-dalton-fanduel/fdjangodog)
 
-A simple Django middleware for submitting timings and exceptions to Datadog.
+A simple Django middleware for submitting timings and exceptions to Datadog using statsd.
 
 This project was originally forked from https://github.com/conorbranagan/django-datadog
 
@@ -10,10 +10,10 @@ This project was originally forked from https://github.com/conorbranagan/django-
 ## Requirements
 
 Python:
-* Tested with 2.7, 3.4 and 3.5
+* Tested with 2.7, 3.4, 3.5, and 3.6
 
 Django
-* Tested with 1.9 and 1.10
+* Tested with 1.9, 1.10, and 1.11
 
 
 ## Installation
@@ -59,15 +59,19 @@ This is tagged with:
 * `namespace`: The url namespace in which the matching url rule is found
 ** See https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.namespace
 * `handler`: The name of the handler for the request - this will be in one of these forms of:
-** `url:<url_name>` if the url resolver rule was named ([ResolverMatch.url_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.url_name))
-** `view:<view_name>` if the url resolver rule was not named ([ResolverMatch.view_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.view_name))
+** `url:<url_name>` if the url resolver rule was named ([ResolverMatch.url_name](https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.urls.ResolverMatch.url_name))
+** `view:<view_name>` if the url resolver rule was not named ([ResolverMatch.view_name](https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.urls.ResolverMatch.view_name))
 * `status_code`: The http response status code (e.g. 200, 503 etc).
 * `exception`: The name of the exception class in the case of an unhandled exception
-
 
 ## Development
 
 Locally, Tox is used to test the project in multiple versions of python.
+
+```
+pip install tox
+tox
+```
 
 ```
 make test
