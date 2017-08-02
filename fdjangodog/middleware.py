@@ -14,7 +14,7 @@ try:
 except ImportError:
     base_class = object
 
-statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost'):
+statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost')
 statsd = DogStatsd(host=statsd_host)
 
 
