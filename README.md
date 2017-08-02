@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/tom-dalton-fanduel/fdjangodog.svg?branch=master)](https://travis-ci.org/tom-dalton-fanduel/fdjangodog)
 
-A simple Django middleware for submitting timings and exceptions to Datadog using statsd.
+A simple Django middleware for submitting timings and exceptions to Datadog using DogStatsD.
 
 This project was originally forked from https://github.com/conorbranagan/django-datadog
 
