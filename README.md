@@ -36,6 +36,7 @@ Add the following configuration to your projects' `settings.py` file:
 
 ```python
 FDJANGODOG_APP_NAME = 'my_app'  # Used as the prefix for all metric names - e.g. this would give 'my_app.request_time'
+FDJANGODOG_STATSD_HOST = 'mystatsdhost' # Optional. Use this if your statsd host is not localhost
 ```
 
 Add the Datadog request handler to your middleware in `settings.py`. In order to capture the most accurate timing data,
