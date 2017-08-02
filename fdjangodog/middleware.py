@@ -14,12 +14,9 @@ try:
 except ImportError:
     base_class = object
 
-if hasattr(settings, 'FDJANGODOG_STATSD_HOST'):
-    statsd_host = settings.FDJANGODOG_STATSD_HOST
-else:
-    statsd_host = "localhost"
-
+statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost'):
 statsd = DogStatsd(host=statsd_host)
+
 
 class FDjangoDogMiddleware(base_class):
     APP_NAME = settings.FDJANGODOG_APP_NAME
