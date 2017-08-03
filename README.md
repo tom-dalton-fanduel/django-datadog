@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/tom-dalton-fanduel/fdjangodog.svg?branch=master)](https://travis-ci.org/tom-dalton-fanduel/fdjangodog)
 
-A simple Django middleware for submitting timings and exceptions to Datadog.
+A simple Django middleware for submitting timings and exceptions to Datadog using DogStatsD.
 
 This project was originally forked from https://github.com/conorbranagan/django-datadog
 
@@ -10,10 +10,10 @@ This project was originally forked from https://github.com/conorbranagan/django-
 ## Requirements
 
 Python:
-* Tested with 2.7, 3.4 and 3.5
+* Tested with 2.7, 3.4, 3.5, and 3.6
 
 Django
-* Tested with 1.9 and 1.10
+* Tested with 1.9, 1.10, and 1.11
 
 
 ## Installation
@@ -36,6 +36,7 @@ Add the following configuration to your projects' `settings.py` file:
 
 ```python
 FDJANGODOG_APP_NAME = 'my_app'  # Used as the prefix for all metric names - e.g. this would give 'my_app.request_time'
+FDJANGODOG_STATSD_HOST = 'mystatsdhost' # Optional. Use this if your statsd host is not localhost
 ```
 
 Add the Datadog request handler to your middleware in `settings.py`. In order to capture the most accurate timing data,
@@ -59,11 +60,10 @@ This is tagged with:
 * `namespace`: The url namespace in which the matching url rule is found
 ** See https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.namespace
 * `handler`: The name of the handler for the request - this will be in one of these forms of:
-** `url:<url_name>` if the url resolver rule was named ([ResolverMatch.url_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.url_name))
-** `view:<view_name>` if the url resolver rule was not named ([ResolverMatch.view_name](https://docs.djangoproject.com/en/1.9/ref/urlresolvers/#django.core.urlresolvers.ResolverMatch.view_name))
+** `url:<url_name>` if the url resolver rule was named ([ResolverMatch.url_name](https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.urls.ResolverMatch.url_name))
+** `view:<view_name>` if the url resolver rule was not named ([ResolverMatch.view_name](https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.urls.ResolverMatch.view_name))
 * `status_code`: The http response status code (e.g. 200, 503 etc).
 * `exception`: The name of the exception class in the case of an unhandled exception
-
 
 ## Development
 

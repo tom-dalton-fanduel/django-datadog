@@ -1,14 +1,21 @@
 import time
 
-from datadog import statsd
+from datadog import DogStatsd
 from django.conf import settings
-from django.core.urlresolvers import resolve, Resolver404
+
+try:
+    from django.urls import resolve, Resolver404
+except ImportError:
+    from django.core.urlresolvers import resolve, Resolver404
 
 try:
     from django.utils.deprecation import MiddlewareMixin
     base_class = MiddlewareMixin
 except ImportError:
     base_class = object
+
+statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost')
+statsd = DogStatsd(host=statsd_host)
 
 
 class FDjangoDogMiddleware(base_class):
