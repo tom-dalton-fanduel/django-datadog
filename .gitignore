@@ -15,3 +15,4 @@ coverage.xml
 fdjangodog_lint.txt
 testresults_*.xml
 
+.vscode/
