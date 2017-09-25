@@ -14,9 +14,14 @@ try:
 except ImportError:
     base_class = object
 
-statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost')
-statsd_port = getattr(settings, 'FDJANGODOG_STATSD_PORT', 8125)
-statsd = DogStatsd(host=statsd_host, port=statsd_port)
+statsd_enabled = getattr(settings, 'FDJANGODOG_STATSD_ENABLE', True)
+statsd = None
+
+# we do not always need to have enabled statsd for development
+if statsd_enabled:
+    statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost')
+    statsd_port = getattr(settings, 'FDJANGODOG_STATSD_PORT', 8125)
+    statsd = DogStatsd(host=statsd_host, port=statsd_port)
 
 
 class FDjangoDogMiddleware(base_class):
@@ -27,6 +32,7 @@ class FDjangoDogMiddleware(base_class):
         super(FDjangoDogMiddleware, self).__init__(*args, **kwargs)
 
         self.stats = statsd
+        self.statsd_enabled = statsd_enabled
         self.timing_metric = '{}.request_time'.format(self.APP_NAME)
 
     def _get_elapsed_time(self, request):
@@ -71,7 +77,8 @@ class FDjangoDogMiddleware(base_class):
         self.stats.histogram(metric=self.timing_metric, value=self._get_elapsed_time(request), tags=tags)
 
     def process_request(self, request):
-        setattr(request, self.DD_TIMING_ATTRIBUTE, time.time())
+        if self.statsd_enabled:
+            setattr(request, self.DD_TIMING_ATTRIBUTE, time.time())
 
     def process_response(self, request, response):
         """Submit timing metrics from the current request."""
