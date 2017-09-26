@@ -27,7 +27,7 @@ all help:
 requirements: .requirements.txt
 
 
-.requirements.txt: requirements/*.txt
+.requirements.txt: setup.py requirements/*.txt
 	pip install -r requirements/development.txt
 	pip freeze > $@
 
