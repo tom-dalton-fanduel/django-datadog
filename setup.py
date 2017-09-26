@@ -16,6 +16,6 @@ setup(
     author='Tom Dalton',
     author_email='tom.dalton@fanduel.com',
     install_requires=[
-        'datadog==0.12.0',
+        'datadog==0.16.0',
     ]
 )
