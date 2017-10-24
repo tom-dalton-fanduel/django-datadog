@@ -1,7 +1,8 @@
-import time
-
 from datadog import DogStatsd
 from django.conf import settings
+
+from . import request_stats
+
 
 try:
     from django.urls import resolve, Resolver404
@@ -14,6 +15,7 @@ try:
 except ImportError:
     base_class = object
 
+
 statsd_host = getattr(settings, 'FDJANGODOG_STATSD_HOST', 'localhost')
 statsd_port = getattr(settings, 'FDJANGODOG_STATSD_PORT', 8125)
 statsd = DogStatsd(host=statsd_host, port=statsd_port)
@@ -21,16 +23,16 @@ statsd = DogStatsd(host=statsd_host, port=statsd_port)
 
 class FDjangoDogMiddleware(base_class):
     APP_NAME = settings.FDJANGODOG_APP_NAME
-    DD_TIMING_ATTRIBUTE = '_dd_start_time'
+    REQUEST_STATS_ATTRIBUTE = '_fdjangodog_stats'
+    STATS_CLASSES = (
+        request_stats.RequestDuration,
+        request_stats.RequestRSSMemoryUsedMB,
+    )
 
     def __init__(self, *args, **kwargs):
         super(FDjangoDogMiddleware, self).__init__(*args, **kwargs)
 
-        self.stats = statsd
-        self.timing_metric = '{}.request_time'.format(self.APP_NAME)
-
-    def _get_elapsed_time(self, request):
-        return time.time() - getattr(request, self.DD_TIMING_ATTRIBUTE)
+        self.statsd = statsd
 
     def _get_request_namespace_and_handler(self, request):
         try:
@@ -67,26 +69,31 @@ class FDjangoDogMiddleware(base_class):
 
         return tags
 
-    def _record_request_time(self, request, tags):
-        self.stats.histogram(metric=self.timing_metric, value=self._get_elapsed_time(request), tags=tags)
+    def _record_metrics(self, request, response=None, exception=None):
+        request_stats = getattr(request, self.REQUEST_STATS_ATTRIBUTE, tuple())
+
+        for request_stat in request_stats:
+            request_stat.finish_recording()
+
+        if response:
+            tags = self._get_metric_tags(request, response=response)
+        else:
+            tags = self._get_metric_tags(request, exception=exception)
+
+        for request_stat in request_stats:
+            full_metric_name = self.APP_NAME + "." + request_stat.metric_name
+            self.statsd.histogram(
+                metric=full_metric_name,
+                value=request_stat.get_metric_value(),
+                tags=tags,
+            )
 
     def process_request(self, request):
-        setattr(request, self.DD_TIMING_ATTRIBUTE, time.time())
+        setattr(request, self.REQUEST_STATS_ATTRIBUTE, [cls() for cls in self.STATS_CLASSES])
 
     def process_response(self, request, response):
-        """Submit timing metrics from the current request."""
-        if not hasattr(request, self.DD_TIMING_ATTRIBUTE):
-            return response
-
-        tags = self._get_metric_tags(request, response)
-        self._record_request_time(request, tags)
-
+        self._record_metrics(request, response=response)
         return response
 
     def process_exception(self, request, exception):
-        """Captures Django view exceptions as Datadog events."""
-        if not hasattr(request, self.DD_TIMING_ATTRIBUTE):
-            return
-
-        tags = self._get_metric_tags(request, exception=exception)
-        self._record_request_time(request, tags)
+        self._record_metrics(request, exception=exception)

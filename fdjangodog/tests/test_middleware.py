@@ -46,7 +46,8 @@ def statsd_mock(mocker):
 
 
 def test_process_request(processed_request):
-    assert processed_request._dd_start_time > 0.0
+    request_stats = processed_request._fdjangodog_stats
+    assert len(request_stats) == 2
 
 
 def test_process_response(statsd_mock, fdd_middleware, processed_request, response):
@@ -54,9 +55,16 @@ def test_process_response(statsd_mock, fdd_middleware, processed_request, respon
 
     assert new_response is response
 
-    __, kwargs = statsd_mock.histogram.call_args
+    duration_call_args, memory_call_args = statsd_mock.histogram.call_args_list
+
+    __, kwargs = duration_call_args
     assert kwargs['metric'] == 'fdjangodog_app_name.request_time'
     assert kwargs['value'] > 0.0
+    assert kwargs['tags'] == ['method:GET', 'handler:url:a_url_name', 'status_code:200']
+
+    __, kwargs = memory_call_args
+    assert kwargs['metric'] == 'fdjangodog_app_name.request_rss_mb'
+    assert kwargs['value'] >= 0.0
     assert kwargs['tags'] == ['method:GET', 'handler:url:a_url_name', 'status_code:200']
 
 
@@ -125,9 +133,16 @@ def unhandled_error():
 def test_process_exception(statsd_mock, fdd_middleware, processed_request, unhandled_error):
     fdd_middleware.process_exception(processed_request, unhandled_error)
 
-    __, kwargs = statsd_mock.histogram.call_args
+    duration_call_args, memory_call_args = statsd_mock.histogram.call_args_list
+
+    __, kwargs = duration_call_args
     assert kwargs['metric'] == 'fdjangodog_app_name.request_time'
     assert kwargs['value'] > 0.0
+    assert kwargs['tags'] == ['method:GET', 'handler:url:a_url_name', 'exception:Exception']
+
+    __, kwargs = memory_call_args
+    assert kwargs['metric'] == 'fdjangodog_app_name.request_rss_mb'
+    assert kwargs['value'] >= 0.0
     assert kwargs['tags'] == ['method:GET', 'handler:url:a_url_name', 'exception:Exception']
 
 

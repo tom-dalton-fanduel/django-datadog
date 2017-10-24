@@ -1,3 +1,9 @@
+vNext
+-----
+
+* Add memory monitoring as requested in #9. Heavily based on https://github.com/krmboya/dj-datadog
+
+
 v0.5.0, 26-Sep-2017
 -------------------
 
