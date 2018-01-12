@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='fdjangodog',
-    version='0.5.0',
+    version='0.5.1',
     packages = [
         'fdjangodog',
     ],
