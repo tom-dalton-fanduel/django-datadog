@@ -17,5 +17,14 @@ setup(
     author_email='tom.dalton@fanduel.com',
     install_requires=[
         'datadog==0.16.0',
-    ]
+    ],
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+    ],
 )
